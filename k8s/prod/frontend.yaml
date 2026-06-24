@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: keyofhistory-prod
+  labels:
+    app: frontend
+spec:
+  replicas: 2 # High Availability (2 instances serving static files)
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          # In real production, this would point to a registry (e.g. eymensezeen/keyofhistory-frontend:1.0.0)
+          image: keyofhistory-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: keyofhistory-prod
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: frontend
+  type: ClusterIP # Kept internal, exposed externally via Ingress controller in prod

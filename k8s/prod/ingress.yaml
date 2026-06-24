@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keyofhistory-ingress
+  namespace: keyofhistory-prod
+  annotations:
+    # No global rewrite-target is needed because Spring Boot controllers expect the /api prefix
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: keyofhistory.local # Local production simulation hostname
+      http:
+        paths:
+          # Route /api traffic directly to the Spring Boot REST API
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          
+          # Route all other traffic to Nginx serving React static assets
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: keyofhistory-prod
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "keyofhistory"
+  DB_USER: "postgres"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  RABBITMQ_HOST: "rabbitmq"
+  RABBITMQ_PORT: "5672"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: keyofhistory-prod
+  labels:
+    app: backend
+spec:
+  replicas: 2 # High Availability (2 instances running simultaneously)
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          # In real production, this would point to a remote registry (Docker Hub, AWS ECR, or GHCR)
+          # e.g., eymensezeen/keyofhistory-backend:1.0.0
+          image: keyofhistory-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+          envFrom:
+            - configMapRef:
+                name: backend-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: keyofhistory-prod
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: backend
+  type: ClusterIP
