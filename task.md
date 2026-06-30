@@ -36,3 +36,16 @@
 - [x] Create Test Environment Manifests under `k8s/test/` (Postgres, Redis, RabbitMQ, Backend, Frontend)
 - [x] Create Prod Environment Manifests under `k8s/prod/` (Postgres, Redis, RabbitMQ, Backend, Frontend, Ingress)
 - [x] Write a README.md under `k8s/` explaining K8s commands, persistent volumes, and ingress setups
+
+## Phase 5: CI/CD Pipeline (GitHub Actions)
+- [x] Create GitHub Actions workflow directories (`.github/workflows/`)
+- [x] Create CI workflow to run backend tests and frontend lints
+- [x] Create CD workflow for Test namespace (Build & push images to GHCR/Docker Hub, update manifests)
+- [x] Create CD workflow for Prod namespace (Build & push images, update prod manifests)
+
+## Phase 6: Interactive Hatay Map Feature
+- [x] Create HatayMap.tsx with interactive SVG and Nisanyan-style etymology details
+- [x] Add navigation views in App.tsx to toggle between Timeline and Map
+- [x] Add retro game style CSS transitions and animations in index.css
+- [x] Add .dockerignore to optimize Docker builds
+

@@ -82,4 +82,14 @@ Otomatik test, derleme, konteynerleştirme ve GitOps manifest güncelleme akış
     *   Backend ve Frontend Docker imajlarını derleyip GHCR'a yükler.
     *   **GitOps Güncellemesi:** Kubernetes manifestlerindeki (`k8s/test/` veya `k8s/prod/`) imaj etiketlerini en yeni derleme etiketi (örn: `sha-<commit_sha>` veya sürüm tag'i `v1.0.0`) ile otomatik olarak günceller ve değişiklikleri GitHub reposuna geri push eder.
 
+---
 
+## 🗺️ Yeni Eklenen Özellik: Hatay Tarih Haritası
+
+Kullanıcının isteği üzerine uygulamaya tamamen interaktif ve retro RPG tarzında bir **Hatay Tarih Haritası** ekledik.
+
+### 📍 Harita Özellikleri
+- **İnteraktif SVG Tasarımı:** Hatay sınırları pikselli ve kalın çerçeveli bir SVG haritası olarak yerel koordinatlarla sıfırdan çizildi.
+- **Retro RPG Göstergeleri:** Haritadaki her ilçe, üzerine gelindiğinde büyüyen, aktif seçildiğinde pikselli RPG bayrak animasyonu ve etrafında genişleyen dalgalanma efekti (`pulse ring`) oluşturan pinlerle işaretlendi.
+- **Nisanyan Tarzı Köken Bilgileri (Etimoloji):** İlçelerin ve bunlara bağlı mahallelerin (örneğin Antakya'nın *Habib-i Neccar* ve *Kurtuluş Caddesi*, Samandağ'ın *Çevlik* ve *Vakıflı* mahalleleri) antik/eski adları, isimlerinin köken bilimsel kökleri (etimolojisi) ve detaylı tarihçeleri bir **RPG Diyalog Kutusu** tarzında sergilenmektedir.
+- **Arayüz Navigasyonu:** Kullanıcıların Zaman Tüneli ile Harita görünümü arasında kesintisiz geçiş yapabilmesi için pikselli düğmelerden oluşan bir üst gezinti menüsü yerleştirildi.
