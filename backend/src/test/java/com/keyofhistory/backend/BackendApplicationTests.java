@@ -12,7 +12,9 @@ import org.springframework.test.context.ActiveProfiles;
  * Uses the "h2" profile to use the in-memory database for testing without needing external services.
  * Mocks RabbitMQ and Redis connection factories so context loads without running external brokers.
  */
-@SpringBootTest
+@SpringBootTest(properties = {
+		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration"
+})
 @ActiveProfiles("h2")
 class BackendApplicationTests {
 
