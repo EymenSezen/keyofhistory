@@ -2,6 +2,7 @@ package com.keyofhistory.backend.controller;
 
 import com.keyofhistory.backend.model.User;
 import com.keyofhistory.backend.repository.UserRepository;
+import com.keyofhistory.backend.service.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
@@ -35,6 +37,9 @@ public class AuthController {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private EmailService emailService;
 
     @Data
     public static class RegisterRequest {
@@ -69,21 +74,33 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("message", "Email is already in use!"));
         }
 
-        // Determine Role: If first user in system, auto-assign ADMIN, else USER
-        String role = userRepository.count() == 0 ? "ADMIN" : "USER";
+        boolean isFirstUser = userRepository.count() == 0;
+        String role = isFirstUser ? "ADMIN" : "USER";
+        boolean enabled = isFirstUser; // Admin is auto-enabled, users require verification
+        String token = enabled ? null : UUID.randomUUID().toString();
 
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(hashPassword(request.getPassword()))
                 .role(role)
+                .enabled(enabled)
+                .verificationToken(token)
                 .build();
 
         userRepository.save(user);
 
+        // If not auto-enabled (non-admin), send verification email
+        if (!enabled) {
+            emailService.sendVerificationEmail(user.getEmail(), user.getUsername(), token);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "message", "User registered successfully!",
-                "role", role
+                "message", enabled 
+                        ? "User registered successfully as Admin!" 
+                        : "Kayıt başarılı! Lütfen hesabınızı doğrulamak için e-posta adresinizi kontrol edin.",
+                "role", role,
+                "requiresVerification", !enabled
         ));
     }
 
@@ -95,6 +112,14 @@ public class AuthController {
         }
 
         User user = userOpt.get();
+        
+        // Check if account is verified / enabled
+        if (!user.isEnabled()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "message", "Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın!"
+            ));
+        }
+
         String hashedInputPassword = hashPassword(request.getPassword());
         if (!user.getPassword().equals(hashedInputPassword)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid username or password!"));
@@ -112,6 +137,21 @@ public class AuthController {
         response.put("role", user.getRole());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verify(@RequestParam String token) {
+        Optional<User> userOpt = userRepository.findByVerificationToken(token);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Geçersiz veya süresi dolmuş e-posta doğrulama token'ı!"));
+        }
+
+        User user = userOpt.get();
+        user.setEnabled(true);
+        user.setVerificationToken(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "E-posta adresiniz başarıyla doğrulandı!"));
     }
 
     @GetMapping("/me")

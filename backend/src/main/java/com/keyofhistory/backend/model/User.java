@@ -29,4 +29,9 @@ public class User {
     private String password; // SHA-256 hashed
     
     private String role; // "ADMIN", "AUTHOR", "USER"
+
+    @Builder.Default
+    private boolean enabled = false;
+
+    private String verificationToken;
 }

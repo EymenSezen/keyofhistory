@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/Header';
 import { StatsDashboard } from './components/StatsDashboard';
@@ -6,15 +6,28 @@ import { EventList } from './components/EventList';
 import { EventForm } from './components/EventForm';
 import { HatayMap } from './components/HatayMap';
 import { AdminDashboard } from './components/AdminDashboard';
-import { AuthModal } from './components/AuthModal';
+import { AuthPage } from './components/AuthPage';
+import { VerifyPage } from './components/VerifyPage';
 import type { HistoricalEvent } from './services/api';
 
 function AppContent() {
   const { user, logout } = useAuth();
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
   const [editingEvent, setEditingEvent] = useState<HistoricalEvent | null>(null);
-  const [currentView, setCurrentView] = useState<'timeline' | 'map' | 'admin'>('timeline');
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<'timeline' | 'map' | 'admin' | 'auth' | 'verify'>('timeline');
+  const [verifyToken, setVerifyToken] = useState<string | null>(null);
+
+  // Check if URL has e-mail verification token on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      setVerifyToken(token);
+      setCurrentView('verify');
+      // Clean query parameters from URL bar
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const handleRefresh = () => {
     setRefreshTrigger((prev) => prev + 1);
@@ -41,11 +54,15 @@ function AppContent() {
         )}
 
         {user ? (
-          <button className="retro-btn secondary-btn" onClick={logout} style={{ padding: '4px 12px', fontSize: '12px' }}>
+          <button className="retro-btn secondary-btn" onClick={() => { logout(); setCurrentView('timeline'); }} style={{ padding: '4px 12px', fontSize: '12px' }}>
             🚪 ÇIKIŞ YAP
           </button>
         ) : (
-          <button className="retro-btn primary-btn" onClick={() => setIsAuthModalOpen(true)} style={{ padding: '4px 12px', fontSize: '12px' }}>
+          <button 
+            className={`retro-btn ${currentView === 'auth' ? 'primary-btn' : 'secondary-btn'}`} 
+            onClick={() => setCurrentView('auth')} 
+            style={{ padding: '4px 12px', fontSize: '12px' }}
+          >
             🔑 GİRİŞ YAP / HESAP AÇ
           </button>
         )}
@@ -84,14 +101,14 @@ function AppContent() {
               refreshTrigger={refreshTrigger} 
               onEditEvent={(event) => setEditingEvent(event)} 
               onEventDeleted={handleRefresh}
-              onOpenAuth={() => setIsAuthModalOpen(true)}
+              onOpenAuth={() => setCurrentView('auth')}
             />
             
             <EventForm 
               editingEvent={editingEvent} 
               onEventSaved={handleSaved} 
               onCancelEdit={() => setEditingEvent(null)}
-              onOpenAuth={() => setIsAuthModalOpen(true)}
+              onOpenAuth={() => setCurrentView('auth')}
             />
           </div>
         </>
@@ -101,7 +118,13 @@ function AppContent() {
 
       {currentView === 'admin' && user?.role === 'ADMIN' && <AdminDashboard />}
 
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      {currentView === 'auth' && (
+        <AuthPage onSuccess={() => setCurrentView('timeline')} />
+      )}
+
+      {currentView === 'verify' && (
+        <VerifyPage token={verifyToken || ''} onGoToLogin={() => setCurrentView('auth')} />
+      )}
     </div>
   );
 }
