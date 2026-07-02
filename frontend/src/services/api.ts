@@ -10,9 +10,25 @@ export interface HistoricalEvent {
   eventDate: string;
   era: string;
   location?: string;
+  approved?: boolean;
+  likes?: number;
+  author?: string;
 }
 
 export const API_BASE = '/api';
+
+const getAuthHeaders = (): Record<string, string> => {
+  const savedUser = localStorage.getItem('user_session');
+  if (savedUser) {
+    try {
+      const user = JSON.parse(savedUser);
+      if (user && user.token) {
+        return { 'Authorization': `Bearer ${user.token}` };
+      }
+    } catch (e) {}
+  }
+  return {};
+};
 
 export const apiService = {
   /**
@@ -23,7 +39,9 @@ export const apiService = {
       ? `${API_BASE}/events?search=${encodeURIComponent(search)}` 
       : `${API_BASE}/events`;
     
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: { ...getAuthHeaders() }
+    });
     if (!response.ok) {
       throw new Error(`Failed to fetch events: ${response.statusText}`);
     }
@@ -34,7 +52,9 @@ export const apiService = {
    * Fetch a single event by ID
    */
   async getEventById(id: number): Promise<HistoricalEvent> {
-    const response = await fetch(`${API_BASE}/events/${id}`);
+    const response = await fetch(`${API_BASE}/events/${id}`, {
+      headers: { ...getAuthHeaders() }
+    });
     if (!response.ok) {
       throw new Error(`Failed to fetch event ${id}: ${response.statusText}`);
     }
@@ -49,6 +69,7 @@ export const apiService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...getAuthHeaders()
       },
       body: JSON.stringify(event),
     });
@@ -68,6 +89,7 @@ export const apiService = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        ...getAuthHeaders()
       },
       body: JSON.stringify(event),
     });
@@ -85,11 +107,70 @@ export const apiService = {
   async deleteEvent(id: number): Promise<void> {
     const response = await fetch(`${API_BASE}/events/${id}`, {
       method: 'DELETE',
+      headers: { ...getAuthHeaders() }
     });
     
     if (!response.ok) {
       throw new Error(`Failed to delete event: ${response.statusText}`);
     }
+  },
+
+  /**
+   * Approve a historical event (admin only)
+   */
+  async approveEvent(id: number): Promise<HistoricalEvent> {
+    const response = await fetch(`${API_BASE}/events/${id}/approve`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders() }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to approve event');
+    }
+    return response.json();
+  },
+
+  /**
+   * Like a historical event
+   */
+  async likeEvent(id: number): Promise<HistoricalEvent> {
+    const response = await fetch(`${API_BASE}/events/${id}/like`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders() }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to like event');
+    }
+    return response.json();
+  },
+
+  /**
+   * Fetch comments list for an event
+   */
+  async getComments(eventId: number): Promise<any[]> {
+    const response = await fetch(`${API_BASE}/events/${eventId}/comments`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch comments');
+    }
+    return response.json();
+  },
+
+  /**
+   * Add a new comment to an event
+   */
+  async addComment(eventId: number, content: string): Promise<any> {
+    const response = await fetch(`${API_BASE}/events/${eventId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      },
+      body: JSON.stringify({ content })
+    });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.message || 'Failed to add comment');
+    }
+    return response.json();
   },
 
   /**

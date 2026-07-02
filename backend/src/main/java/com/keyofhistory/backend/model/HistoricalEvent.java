@@ -48,4 +48,15 @@ public class HistoricalEvent {
 
     @Column(length = 100)
     private String location;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean approved = false;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private int likes = 0;
+
+    @Column(length = 100)
+    private String author;
 }

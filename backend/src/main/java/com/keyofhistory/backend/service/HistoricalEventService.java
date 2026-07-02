@@ -84,6 +84,46 @@ public class HistoricalEventService {
         return repository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
     }
 
+    @Transactional(readOnly = true)
+    public List<HistoricalEvent> getAllEventsFiltered(String role, String username) {
+        List<HistoricalEvent> all = repository.findAll();
+        return filterEvents(all, role, username);
+    }
+
+    @Transactional(readOnly = true)
+    public List<HistoricalEvent> searchEventsFiltered(String keyword, String role, String username) {
+        List<HistoricalEvent> results = searchEvents(keyword);
+        return filterEvents(results, role, username);
+    }
+
+    @Transactional
+    public HistoricalEvent approveEvent(Long id) {
+        HistoricalEvent existingEvent = getEventById(id);
+        existingEvent.setApproved(true);
+        HistoricalEvent saved = repository.save(existingEvent);
+        publishMessage(saved, "APPROVED");
+        return saved;
+    }
+
+    @Transactional
+    public HistoricalEvent likeEvent(Long id) {
+        HistoricalEvent existingEvent = getEventById(id);
+        existingEvent.setLikes(existingEvent.getLikes() + 1);
+        HistoricalEvent saved = repository.save(existingEvent);
+        publishMessage(saved, "LIKED");
+        return saved;
+    }
+
+    private List<HistoricalEvent> filterEvents(List<HistoricalEvent> events, String role, String username) {
+        if ("ADMIN".equals(role)) {
+            return events;
+        }
+        return events.stream().filter(e -> {
+            if (e.isApproved()) return true;
+            return username != null && username.equals(e.getAuthor());
+        }).collect(java.util.stream.Collectors.toList());
+    }
+
     /**
      * Helper method to publish message asynchronously to RabbitMQ exchange
      */

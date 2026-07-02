@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import type { HistoricalEvent } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 interface EventFormProps {
   editingEvent: HistoricalEvent | null;
   onEventSaved: () => void;
   onCancelEdit: () => void;
+  onOpenAuth: () => void;
 }
 
 const INITIAL_FORM_STATE: HistoricalEvent = {
@@ -16,7 +18,13 @@ const INITIAL_FORM_STATE: HistoricalEvent = {
   location: '',
 };
 
-export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved, onCancelEdit }) => {
+export const EventForm: React.FC<EventFormProps> = ({ 
+  editingEvent, 
+  onEventSaved, 
+  onCancelEdit,
+  onOpenAuth
+}) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState<HistoricalEvent>(INITIAL_FORM_STATE);
   const [loading, setLoading] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -36,7 +44,6 @@ export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved
       ...prev,
       [name]: value,
     }));
-    // Clear field-specific validation errors on change
     if (validationErrors[name]) {
       setValidationErrors((prev) => {
         const copy = { ...prev };
@@ -87,6 +94,28 @@ export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved
     }
   };
 
+  // Render form helper depending on user role
+  if (!user) {
+    return (
+      <section className="event-form-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
+        <p style={{ color: '#888', marginBottom: '16px' }}>🔑 Yeni tarihî olaylar eklemek veya düzenlemek için oturum açmalısınız.</p>
+        <button className="retro-btn primary-btn" onClick={onOpenAuth}>
+          Giriş Yap / Üye Ol
+        </button>
+      </section>
+    );
+  }
+
+  const canWrite = user.role === 'ADMIN' || user.role === 'AUTHOR';
+  if (!canWrite) {
+    return (
+      <section className="event-form-section" style={{ padding: '20px', textAlign: 'center' }}>
+        <p style={{ color: '#e07a5f' }}>⚠️ Rolünüz (USER) yeni olay eklemeye izin vermemektedir.</p>
+        <p style={{ fontSize: '12px', color: '#888', marginTop: '8px' }}>Yazar veya yönetici rolü talep edebilirsiniz.</p>
+      </section>
+    );
+  }
+
   return (
     <section className="event-form-section">
       <div className="section-header">
@@ -97,6 +126,12 @@ export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved
           {formData.id ? 'Tarihî Olayı Düzenle' : 'Yeni Tarihî Olay Ekle'}
         </h2>
       </div>
+
+      {user.role === 'AUTHOR' && !formData.id && (
+        <div className="retro-alert info-alert" style={{ margin: '8px 0', fontSize: '11px', padding: '6px' }}>
+          📝 Yazar olarak eklediğiniz olaylar yönetici onayından sonra yayınlanacaktır.
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="event-form">
         <div className="form-row-2">
@@ -109,7 +144,7 @@ export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Örn: İstanbul'un Fethi"
+              placeholder="Örn: Hatay Devleti Kuruldu"
               className={validationErrors.title ? 'input-error' : ''}
               disabled={loading}
             />
@@ -125,7 +160,7 @@ export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved
               name="eventDate"
               value={formData.eventDate}
               onChange={handleChange}
-              placeholder="Örn: 1453-05-29 veya M.Ö. 3000"
+              placeholder="Örn: 1938-09-07"
               className={validationErrors.eventDate ? 'input-error' : ''}
               disabled={loading}
             />
@@ -162,7 +197,7 @@ export const EventForm: React.FC<EventFormProps> = ({ editingEvent, onEventSaved
               name="location"
               value={formData.location || ''}
               onChange={handleChange}
-              placeholder="Örn: İstanbul"
+              placeholder="Örn: Antakya"
               disabled={loading}
             />
           </div>
