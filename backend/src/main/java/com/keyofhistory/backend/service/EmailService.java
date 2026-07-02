@@ -11,6 +11,9 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username:}")
+    private String fromEmail;
+
     public void sendVerificationEmail(String email, String username, String token) {
         if (mailSender == null) {
             System.out.println("JavaMailSender is not configured. Verification email simulation for user: " 
@@ -20,7 +23,8 @@ public class EmailService {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("no-reply@keyofhistory.com");
+            String sender = (fromEmail != null && !fromEmail.trim().isEmpty()) ? fromEmail : "no-reply@keyofhistory.com";
+            message.setFrom(sender);
             message.setTo(email);
             message.setSubject("Key of History - E-posta Doğrulama");
 
