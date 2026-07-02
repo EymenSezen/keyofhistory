@@ -118,30 +118,234 @@ const HISTORICAL_NEIGHBORHOODS_DETAILS: Record<string, Neighborhood> = {
   }
 };
 
+// PDF Arabic name mappings
+const NEIGHBORHOOD_ARABIC_NAMES: Record<string, string> = {
+  // Antakya (Mtakey)
+  'Açıkdere': 'Tel 7abeş',
+  'Affan': 'Il-3ıffan',
+  'Alahan': '3alle3eddin',
+  'Alazı': 'Ezliy / Billeniy',
+  'Amik Ovası': 'Il-3ımk',
+  'Anayazı': 'Evbit ıd-Dilbey',
+  'Avsuyu': '3afsiy',
+  'Baltacık': 'Il-Imhacir',
+  'Büyükdalyan': 'Dalyen',
+  'Cuma': 'Cımma',
+  'Demirköprü': 'Cisril 7adid',
+  'Derince': 'Il-Billeniy',
+  'Dikmece': 'Dekimca',
+  'Dörtayak': 'Dirdyak',
+  'Ekinci': '3aydiy',
+  'Gülderen': 'Küdren',
+  'Günyazı': 'Il-3akliy',
+  'Güzelburç': 'Gzelbırç',
+  'Haraparası': 'Il-I3hrub',
+  'Karaali': 'Kraliy',
+  'Karlısu': 'Kraksiy',
+  'Kavaslı': 'Kıvvesiy',
+  'Kisecik': 'Kesecük',
+  'Kuruyer': 'Kirriy',
+  'Kuzeytepe': 'Tlel Kız7',
+  'Küçükdalyan': 'Dalyen Zğayyir / Lı7rob / 3ayn Tviley',
+  'Madenboyu': 'Bdembo',
+  'Maşuklu': 'Ma3şuka',
+  'Narlıca': 'Elica',
+  'Odabaşı': 'Kıvvesiy',
+  'Oğlakören': 'Sinberiy',
+  'Orhanlı': 'Hınniy',
+  'Saçaklı': 'Telldis',
+  'Saraycık': 'Sreycak',
+  'Serinyol': 'Betirken',
+  'Sofular': 'Suflor',
+  'Şükrü Kanatlı Mah': 'Sebzeniy',
+  'Tanışma': 'Tırşmaniy',
+  'Üçgedik': '3uvvakiy',
+  'Üzümdalı': 'Sibbe7iy',
+  'Yeşilova': '7amda',
+  'Zülüflühan': 'Zilifkenliy',
+
+  // Defne (Harbiy)
+  'Aknehir': 'N3ayriy',
+  'Akdeniz Mah': '7art ıl-Zeytun',
+  'Aşağıdöver': 'Il-Rveysi',
+  'Aşağıokçular': 'Fellit',
+  'Bahçeköy': 'Rveyse',
+  'Balıklıdere': 'Zire',
+  'Ballıöz': 'Berbrun',
+  'Bostancık': 'Bisten il-Ros',
+  'Büyükçat': 'Minet',
+  'Çardaklı': 'Cerdekiy',
+  'Çekmece': 'Çekimca',
+  'Çınarlı': 'Nehr il-Tleyl',
+  'Çökek': 'Il-Çkakliy',
+  'Değirmenyolu': 'Biğdediy',
+  'Dervişli': 'Derşeya',
+  'Döver': 'Dver',
+  'Dursunlu': 'Dersuniy',
+  'Elektrik': 'Davviyat',
+  'Esenbulak': '3ibbora',
+  'Gümüşgöze': 'Yakto',
+  'Güneysöğüt': 'Bet ız-Z3aytre',
+  'Hancağız': '7seyniy',
+  'Hüseyinli': '7seyniy',
+  'Harbiye': 'Harbiy',
+  'Karşıyaka': 'Zire',
+  'Karyer': 'Karyi',
+  'Koçören': 'Mengüliy',
+  'Meydancık': 'Meydencuk',
+  'Özbek': 'Izbekliy',
+  'Samankaya': 'Der3uziy',
+  'Sinanlı': 'Sineniy',
+  'Subaşı': 'Süsiy',
+  'Sümerler': 'İl-Bdeyve',
+  'Tavla': 'Tavla',
+  'Toygarlı': 'Tlel hımbles',
+  'Turunçlu': 'Trınç',
+  'Üzengili': 'Tirraşiy',
+  'Yeşilpınar': '3ayn ıl-Camus',
+  'Yeniçağ': 'Tavakliy',
+
+  // Arsuz (3arsuz)
+  'Akçalı': 'Iğcaali',
+  'Avcılarsuyu': 'Nahr eş-Şijed',
+  'Beyköy': 'Bekwey',
+  'Cumhuriyet Mah': 'Fukani',
+  'Çetillik': 'Iş-Ştull',
+  'Gökmeydan': 'Güvmiden',
+  'Gözcüler': 'Lüvhep',
+  'Gülcihan': 'Gülçhen',
+  'Hacıahmetli': 'Il-Ihmedliy',
+  'Hüyük': 'It-Tell',
+  'Karaağaç': 'Karağeç',
+  'Konarlı': 'Frenciy',
+  'Madenli': 'Kilisey',
+  'Nardüzü': 'Şawra',
+  'Övündük': 'Fakhura',
+  'Pirinçlik': 'Brınclik',
+  'Şarkkonak': 'Micano',
+  'Üçgüllük': 'Ekbör',
+
+  // Samandağ (Süveydiy)
+  'Ataköy': '7amduniy',
+  'Avcılar': 'Levciy',
+  'Batıayaz': 'Bityes',
+  'Cemal Gürsel Mah': 'Zeytuniy',
+  'Ceylandere': '3immaca',
+  'Çanakoluk': 'Kaba7arnub',
+  'Çevlik': 'Mele7a',
+  'Çiğdede': '7adid ıc-Cdeyde',
+  'Çöğürlü': 'Sabunit Cilli',
+  'Değirmenbaşı': 'Karaçen / Nehr il-ikbir Tı7teniy',
+  'Deniz Mah': 'Icdeyde',
+  'Eriklikuyu': '7bebliy',
+  'Fidanlı': 'Bet Slim',
+  'Gözene': 'Bet Da3dük',
+  'Huzurlu': 'Il-Hara',
+  'Kapısuyu': 'Kebusi',
+  'Karaçay': 'Nehr il-Zğayyir',
+  'Koyunoğlu': 'Ved il-Cerob',
+  'Kurtderesi': 'Kudres',
+  'Kuşalanı': 'Mğayrun/Mutayran',
+  'Liman': 'Mina',
+  'Mağaracık': 'Mğayer',
+  'Meydan': 'Myadun',
+  'Mızraklı': 'Mişraki',
+  'Seldiren': 'Sildren',
+  'Sutaşı': 'Sabunit M3eyrun',
+  'Tekebaşı': 'Cilliy',
+  'Tomruksuyu': 'Karamenniy',
+  'Uzunbağ': 'Nehr il-İkbir',
+  'Vakıflı': 'Vakıfliy',
+  'Yaylıca': 'Seylca',
+  'Yeşilköy': 'Tnenir',
+  'Yeşilyazı': 'Zırit bet Cıdenya',
+
+  // Altınözü (Il-Kseyr)
+  'Akamber': 'Zev',
+  'Avuttepe': 'Kifir3abet',
+  'Akdarı': 'Bera',
+  'Altınkaya': 'Baslika',
+  'Babatorun': 'Babıtrun',
+  'Boynuyoğun': 'Btetun',
+  'Çetenli': 'Bıksenuz',
+  'Dokuzdal': 'Salkıya',
+  'Enek': 'Feng',
+  'Erbaşı': 'Fırfıriy',
+  'Fatikli': 'Feytki',
+  'Günvuran': '3anfuvvar',
+  'Hanyolu': 'Hayno',
+  'Kansu': '3ansu',
+  'Karbeyaz': 'Kırbyez',
+  'Kılıçtutan': 'Skutiyet',
+  'Kıyıgören': 'Kalanez',
+  'Kolcular': '3ayntelet',
+  'Kuyubaşı': 'Bedirhun',
+  'Oymaklı': 'Deyr',
+  'Sarıbük': 'Beşirbe',
+  'Sarılar': 'Suriye',
+  'Seferli': 'Seferiy',
+  'Sivrikavak': 'Com',
+  'Tepehan': 'Ermence',
+  'Tokaçlı': 'Cneydo',
+  'Tokdemir': 'Frincar',
+  'Toprakhisar': 'Beverda',
+  'Yanıkpınar': 'Marsiy',
+  'Yolağzı': 'Imkabros',
+  'Yunushan': 'Miskano',
+  'Ziyaret': 'Ziyara',
+
+  // Kumlu (Kumliy)
+  'Akpınar': '3eyn ıl-Bayda',
+
+  // Belen (Bilen)
+  'Bakras': 'Bığros',
+  'Ötençay': 'Bığros',
+
+  // Yayladağı (Yirdiy)
+  'Bezge': 'Yarıntaba',
+  'Çatbaşı': 'Kırsbello',
+  'Çaksına': 'Çaksuniy',
+  'Karaköse': 'Kreyküsiy',
+  'Sebenoba': 'Tmaymi',
+  'Şenköy': 'Day3et ıl-Şey7',
+  'Turfanda': 'Tırfando',
+  'Üçırmak': 'Mastbiy'
+};
+
 // Raw lists of all neighborhoods for each of the 15 districts of Hatay
 const NEIGHBORHOODS_BY_DISTRICT: Record<string, string[]> = {
   antakya: [
-    'Habib-i Neccar', 'Kurtuluş Caddesi', 'Güllübahçe', 'Akevler', 'Akasya', 'Aksaray', 'Altınçay', 
-    'Bağrıyanık', 'Cebrail', 'Cumhuriyet', 'Esentepe', 'Esenlik', 'Gazi', 'General Şükrü Kanatlı', 
-    'Havuzlar', 'Haraparası', 'İplik Pazarı', 'Kantara', 'Karaali', 'Karabağ', 'Kışlasaray', 
-    'Kuyulu', 'Kurtuluş', 'Meydan', 'Odabaşı', 'Saraykent', 'Şirince', 'Ürgen Paşa', 'Zenginler', 
-    'Zoğallı', 'Açıkdere', 'Alahan', 'Anayazı', 'Apaydın', 'Avsuyu', 'Bitiren', 'Bohşin', 
-    'Büyükdalyan', 'Demirköprü', 'Derince', 'Doğanköy', 'Ekinci', 'Gökçegöz', 'Gülderen', 
-    'Güzelburç', 'Hasanlı', 'Karlısu', 'Kuruyer', 'Madenboyu', 'Maraşboğazı', 'Narlıca', 
-    'Serinyol', 'Suvatlı', 'Tahtaköprü', 'Uzunali', 'Yağmurcu'
+    'Habib-i Neccar', 'Kurtuluş Caddesi', 'Güllübahçe', 'Affan', 'Açıkdere', 'Alahan', 'Alazı', 
+    'Amik Ovası', 'Anayazı', 'Avsuyu', 'Baltacık', 'Büyükdalyan', 'Cuma', 'Demirköprü', 
+    'Derince', 'Dikmece', 'Dörtayak', 'Ekinci', 'Gülderen', 'Günyazı', 'Güzelburç', 
+    'Haraparası', 'Karaali', 'Karlısu', 'Kavaslı', 'Kisecik', 'Kuruyer', 'Kuzeytepe', 
+    'Küçükdalyan', 'Madenboyu', 'Maşuklu', 'Narlıca', 'Odabaşı', 'Oğlakören', 'Saçaklı', 
+    'Saraycık', 'Serinyol', 'Sofular', 'Şükrü Kanatlı Mah', 'Tanışma', 'Üçgedik', 
+    'Üzümdalı', 'Zülüflühan', 'Akevler', 'Akasya', 'Aksaray', 'Altınçay', 'Bağrıyanık', 
+    'Cebrail', 'Cumhuriyet', 'Esentepe', 'Esenlik', 'Gazi', 'General Şükrü Kanatlı', 
+    'Havuzlar', 'Kuyulu', 'Kurtuluş', 'Meydan', 'Odabaşı', 'Saraykent', 'Şirince', 
+    'Ürgen Paşa', 'Zenginler', 'Zoğallı', 'Açıkdere', 'Alahan', 'Anayazı', 'Apaydın', 
+    'Avsuyu', 'Bitiren', 'Bohşin', 'Demirköprü', 'Derince', 'Doğanköy', 'Ekinci', 
+    'Gökçegöz', 'Gülderen', 'Güzelburç', 'Hasanlı', 'Karlısu', 'Kuruyer', 'Madenboyu', 
+    'Maraşboğazı', 'Serinyol', 'Suvatlı', 'Tahtaköprü', 'Uzunali', 'Yağmurcu'
   ],
   defne: [
-    'Harbiye', 'Sümerler', 'Aknehir', 'Aşağıokçular', 'Balıklıdere', 'Bostancık', 'Çekmece', 
-    'Dursunlu', 'Gümüşgöze', 'Meydancık', 'Subaşı', 'Toygarlı', 'Turunçlu', 'Yeşilpınar', 
+    'Harbiye', 'Sümerler', 'Aknehir', 'Akdeniz Mah', 'Aşağıdöver', 'Aşağıokçular', 'Bahçeköy', 
+    'Balıklıdere', 'Ballıöz', 'Bostancık', 'Büyükçat', 'Çardaklı', 'Çekmece', 'Çınarlı', 
+    'Çökek', 'Değirmenyolu', 'Dervişli', 'Döver', 'Dursunlu', 'Elektrik', 'Esenbulak', 
+    'Gümüşgöze', 'Güneysöğüt', 'Hancağız', 'Hüseyinli', 'Karşıyaka', 'Karyer', 'Koçören', 
+    'Meydancık', 'Özbek', 'Samankaya', 'Sinanlı', 'Subaşı', 'Tavla', 'Toygarlı', 'Turunçlu', 
+    'Üzengili', 'Yeşilpınar', 'Yeniçağ', 'Subaşı', 'Toygarlı', 'Turunçlu', 'Yeşilpınar', 
     'Ballıöz', 'Bahçeköy', 'Büyükçat', 'Çardaklı', 'Değirmenyolu', 'Hancağız', 'Hüseyinli', 
     'Karşıyaka', 'Koçören', 'Orhanlı', 'Özbek', 'Sinanlı', 'Tavla', 'Yeniçağ'
   ],
   samandag: [
-    'Çevlik', 'Vakıflı', 'Hıdırbey', 'Atatürk', 'Cemal Gürsel', 'Kurtderesi', 'Mağaracık', 
+    'Çevlik', 'Vakıflı', 'Hıdırbey', 'Ataköy', 'Avcılar', 'Çiğdede', 'Değirmenbaşı', 'Liman', 
+    'Seldiren', 'Yaylıca', 'Yeşilköy', 'Atatürk', 'Cemal Gürsel Mah', 'Kurtderesi', 'Mağaracık', 
     'Tekebaşı', 'Yeni Mahalle', 'Yeşilada', 'Batıayaz', 'Büyükoba', 'Ceylandere', 'Çamlıyayla', 
-    'Çanakoluk', 'Çöğürlü', 'Deniz', 'Eriklikuyu', 'Fidanlı', 'Gözene', 'Huzurlu', 'Kapısuyu', 
-    'Karadağ', 'Karaçay', 'Koyunoğlu', 'Kuşalanı', 'Meydan', 'Mızraklı', 'Sutaşı', 'Süzgeç', 
-    'Tomruksuyu', 'Uzunbağ', 'Yeniköy', 'Yeşilyazı'
+    'Çanakoluk', 'Çöğürlü', 'Deniz Mah', 'Eriklikuyu', 'Fidanlı', 'Gözene', 'Huzurlu', 'Kapısuyu', 
+    'Karadağ', 'Karaçay', 'Koyunoğlu', 'Kurtderesi', 'Kuşalanı', 'Meydan', 'Mızraklı', 'Sutaşı', 
+    'Süzgeç', 'Tomruksuyu', 'Uzunbağ', 'Yeniköy', 'Yeşilyazı'
   ],
   iskenderun: [
     'Karayılan', 'Pac', 'Barıştepe', 'Buluttepe', 'Çay', 'Dumlupınar', 'Esentepe', 'Gürsel', 
@@ -151,15 +355,15 @@ const NEIGHBORHOODS_BY_DISTRICT: Record<string, string[]> = {
     'Denizciler', 'Azganlık', 'Karahüseyinli', 'Bekbele', 'Suçıkağı'
   ],
   arsuz: [
-    'Gözcüler', 'Akçalı', 'Arpagedik', 'Arpaderesi', 'Uluçınar', 'Avcılarsuyu', 'Beyköy', 
-    'Gökmeydan', 'Hacıahmetli', 'Hüyük', 'Işıklı', 'Kale', 'Karagöz', 'Karaağaç', 'Konacık', 
-    'Madenli', 'Nardüzü', 'Pirinçlik', 'Şarkkonak', 'Tatarlı', 'Tülek', 'Üçgüllük', 'Yelkoma', 
-    'Derekuyu', 'Helvalı', 'Haymaseki', 'Kışla', 'Kozaklı'
+    'Gözcüler', 'Akçalı', 'Avcılarsuyu', 'Beyköy', 'Cumhuriyet Mah', 'Çetillik', 'Gökmeydan', 
+    'Gülcihan', 'Hacıahmetli', 'Hüyük', 'Karaağaç', 'Konarlı', 'Madenli', 'Nardüzü', 'Övündük', 
+    'Pirinçlik', 'Şarkkonak', 'Üçgüllük', 'Tatarlı', 'Tülek', 'Yelkoma', 'Derekuyu', 'Helvalı', 
+    'Haymaseki', 'Kışla', 'Kozaklı'
   ],
   belen: [
-    'Halilbey', 'Abdi İpekçi', 'Bakras', 'Fatih', 'Kömürçukuru', 'Kıcı', 'Ötençay', 'Soğukoluk', 
-    'Şenbük', 'Tosyalı', 'Yapraklar', 'Benlidere', 'Çakallı', 'Derebahçe', 'Güzelyayla', 
-    'Karapelit', 'Müftüler', 'Sarımazı'
+    'Halilbey', 'Bakras', 'Ötençay', 'Abdi İpekçi', 'Fatih', 'Kömürçukuru', 'Kıcı', 
+    'Soğukoluk', 'Şenbük', 'Tosyalı', 'Yapraklar', 'Benlidere', 'Çakallı', 'Derebahçe', 
+    'Güzelyayla', 'Karapelit', 'Müftüler', 'Sarımazı'
   ],
   reyhanli: [
     'Yenişehir', 'Cemil Meriç', 'Adalar', 'Bağlar', 'Fidanlık', 'Gültepe', 'Harran', 'Pınarbaşı', 
@@ -168,11 +372,11 @@ const NEIGHBORHOODS_BY_DISTRICT: Record<string, string[]> = {
     'Nergizli', 'Oğulpınar', 'Tayfur Sökmen', 'Terzihüyük', 'Uzunkavak', 'Varışlı'
   ],
   altinozu: [
-    'Tokaçlı', 'Kozkalesi', 'Alakent', 'Akamber', 'Akdarı', 'Avuttepe', 'Babatorun', 'Boynuyoğun', 
-    'Büyükburç', 'Carcurum', 'Çakıryiçek', 'Çatbaşı', 'Çetenli', 'Erbaş', 'Enek', 'Fatih', 
-    'Hacıpaşa', 'Karsu', 'Kansu', 'Karbeyaz', 'Kıyıgören', 'Kolcular', 'Kurudere', 'Kurtmezrası', 
-    'Mayadalı', 'Mursal', 'Oymaklı', 'Sarılar', 'Sarıbük', 'Seferli', 'Sofular', 'Tepehan', 
-    'Toprakhisar', 'Turkmani', 'Yarseli', 'Yenişehir', 'Yiğityolu', 'Yunushanı', 'Ziyaret'
+    'Tokaçlı', 'Kozkalesi', 'Akamber', 'Avuttepe', 'Akdarı', 'Altınkaya', 'Babatorun', 'Boynuyoğun', 
+    'Çetenli', 'Dokuzdal', 'Enek', 'Erbaşı', 'Fatikli', 'Günvuran', 'Hanyolu', 'Kansu', 'Karbeyaz', 
+    'Kılıçtutan', 'Kıyıgören', 'Kolcular', 'Kuyubaşı', 'Oymaklı', 'Sarıbük', 'Sarılar', 'Seferli', 
+    'Sivrikavak', 'Sofular', 'Tepehan', 'Tokdemir', 'Toprakhisar', 'Yanıkpınar', 'Yolağzı', 
+    'Yunushan', 'Ziyaret'
   ],
   kirikhan: [
     'Alibeyli', 'Alsancak', 'Barbaros', 'Cumhuriyet', 'Fatih', 'Mimar Sinan', 'Narlıdere', 
@@ -187,10 +391,11 @@ const NEIGHBORHOODS_BY_DISTRICT: Record<string, string[]> = {
     'Haydarlar', 'Kaleköy', 'Koruhüyük', 'Mazmanlı', 'Saylak', 'Tepebaşı', 'Zeytinoba'
   ],
   yayladagi: [
-    'Çamaltı', 'Kurtuluş', 'Leylekli', 'Şenköy', 'Turfanda', 'Yassıca', 'Arslanyazı', 
-    'Aydınbahçe', 'Bezge', 'Çakı', 'Çatbaşı', 'Denizgören', 'Dutlubahçe', 'Görentaş', 
-    'Güzelyurt', 'Hisarardı', 'Karacurun', 'Karaköse', 'Kışlak', 'Kulaç', 'Olgunlar', 
-    'Sebenoba', 'Sungur', 'Şakşak', 'Uluyol', 'Yalaz', 'Yenice', 'Yeşiltepe'
+    'Çamaltı', 'Kurtuluş', 'Leylekli', 'Şenköy', 'Turfanda', 'Yassıca', 'Bezge', 'Çatbaşı', 
+    'Çaksına', 'Karaköse', 'Sebenoba', 'Turfanda', 'Üçırmak', 'Arslanyazı', 'Aydınbahçe', 
+    'Bezge', 'Çakı', 'Denizgören', 'Dutlubahçe', 'Görentaş', 'Güzelyurt', 'Hisarardı', 
+    'Karacurun', 'Karaköse', 'Kışlak', 'Kulaç', 'Olgunlar', 'Sebenoba', 'Sungur', 'Şakşak', 
+    'Uluyol', 'Yalaz', 'Yenice', 'Yeşiltepe'
   ],
   erzin: [
     'Bahçelievler', 'Gökdere', 'Hürriyet', 'İstiklal', 'Mahmutlu', 'Mustafakemalpaşa', 
@@ -219,7 +424,7 @@ const HATAY_DISTRICTS: District[] = [
     description: 'Hatay\'ın tarihi ve idari merkezi. Tarih boyunca Doğu\'nun Kraliçesi olarak adlandırılmış antik metropol.',
     history: 'MÖ 300 yılında Büyük İskender\'in generali Seleucus I Nicator tarafından kurulmuştur. Roma İmparatorluğu\'nun en büyük 3. şehri olmuş, Hristiyanlık isminin ilk kez kullanıldığı St. Pierre Kilisesi\'ne ve Habib-i Neccar Camii\'ne ev sahipliği yapmaktadır.',
     coordinates: { x: 290, y: 370 },
-    neighborhoods: [] // Will be populated from the raw lists programmatically
+    neighborhoods: [] 
   },
   {
     id: 'defne',
@@ -288,7 +493,7 @@ const HATAY_DISTRICTS: District[] = [
   {
     id: 'hassa',
     name: 'Hassa',
-    description: 'Amanos Dağları\'nın doğu yamaçlarında kurulu, volkanik arazileri ve üzüm bağlarıyla ünlü ilçe.',
+    description: 'Amanos Dağları\'nı aşan tarihi yol ve üzüm bağlarıyla ünlü ilçe.',
     history: 'Tarih öncesi çağlardan beri yerleşim gören bölge, Osmanlı İmparatorluğu döneminde "Hassa" (özel/seçkin yerleşim) adını almıştır.',
     coordinates: { x: 440, y: 130 },
     neighborhoods: []
@@ -335,19 +540,33 @@ const HATAY_DISTRICTS: District[] = [
   }
 ];
 
-// Programmatically populate the neighborhoods arrays
+// Populate the neighborhoods dynamically and merge with Arabic translations
 HATAY_DISTRICTS.forEach((district) => {
   const neighborhoodNames = NEIGHBORHOODS_BY_DISTRICT[district.id] || [];
-  district.neighborhoods = neighborhoodNames.map((name) => {
-    // If we have custom details for this neighborhood, use them
+  // Deduplicate names to prevent UI list duplicate buttons
+  const uniqueNames = Array.from(new Set(neighborhoodNames)).sort((a, b) => a.localeCompare(b, 'tr'));
+  
+  district.neighborhoods = uniqueNames.map((name) => {
+    // Look up Arabic translation from PDF data
+    const arabicName = NEIGHBORHOOD_ARABIC_NAMES[name] || undefined;
+    
+    // Check if we have pre-defined detailed historical records
     if (HISTORICAL_NEIGHBORHOODS_DETAILS[name]) {
-      return HISTORICAL_NEIGHBORHOODS_DETAILS[name];
+      const details = HISTORICAL_NEIGHBORHOODS_DETAILS[name];
+      const mergedOldName = arabicName 
+        ? `${details.oldName || 'Antik İsim'} (Arapça: ${arabicName})` 
+        : details.oldName;
+      return {
+        ...details,
+        oldName: mergedOldName
+      };
     }
-    // Otherwise, generate standard default fallback data
+    
+    // Otherwise return fallback metadata with Arabic name if available
     return {
       name,
-      oldName: 'Tarihi kayıt yok',
-      etymology: 'Bu mahallenin isminin spesifik bir etimolojik köken kaydı bulunmamaktadır. Genellikle Türkçe kökenli modern isimdir.',
+      oldName: arabicName ? `Arapça: ${arabicName}` : 'Tarihi kayıt yok',
+      etymology: 'Bu mahallenin isminin spesifik bir etimolojik köken kaydı bulunmamaktadır. Genellikle Türkçe veya Arapça kökenlidir.',
       history: `Bu mahalle, cumhuriyet döneminde idari sınırların düzenlenmesi veya yeni yerleşimlerin kurulmasıyla oluşmuştur. İlçe genel tarihi olan "${district.name}" tarihi detaylarını üstteki panelden inceleyebilirsiniz.`
     };
   });
@@ -534,7 +753,7 @@ export const HatayMap: React.FC = () => {
                     
                     {selectedNeighborhood.oldName && (
                       <div className="nb-meta-row">
-                        <span className="nb-meta-label">Antik/Eski Adı:</span>
+                        <span className="nb-meta-label">Eski Adı / Arapça İsmi:</span>
                         <span className="nb-meta-value old-name">{selectedNeighborhood.oldName}</span>
                       </div>
                     )}
