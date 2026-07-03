@@ -13,6 +13,11 @@ data:
   REDIS_PORT: "6379"
   RABBITMQ_HOST: "rabbitmq"
   RABBITMQ_PORT: "5672"
+  SPRING_MAIL_HOST: "smtp.ethereal.email"
+  SPRING_MAIL_PORT: "587"
+  SPRING_MAIL_SMTP_AUTH: "true"
+  SPRING_MAIL_STARTTLS_ENABLE: "true"
+  SPRING_MAIL_STARTTLS_REQUIRED: "true"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,6 +60,16 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: postgres-password
+            - name: SPRING_MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secret
+                  key: smtp-username
+            - name: SPRING_MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secret
+                  key: smtp-password
 ---
 apiVersion: v1
 kind: Service
@@ -68,3 +83,14 @@ spec:
   selector:
     app: backend
   type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: smtp-secret
+  namespace: keyofhistory-prod
+type: Opaque
+stringData:
+  smtp-username: "oxdb3dpbckio4crg@ethereal.email"
+  smtp-password: "Nc2CfUSza5WqnpU1cG"
+
