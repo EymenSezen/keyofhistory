@@ -23,8 +23,6 @@ Thumbs.db
 **/node_modules/
 **/dist/
 **/dist-ssr/
-**/*.local
-**/package-lock.json
 **/yarn-error.log
 **/.eslintcache
 
