@@ -1,84 +1,15 @@
 version: '3.8'
 
 services:
-  # 1. PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: keyofhistory-postgres-prod
-    restart: always
-    environment:
-      - POSTGRES_DB=keyofhistory
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres_prod_data:/var/lib/postgresql/data
-    networks:
-      - keyofhistory-prod-network
-
-  # 2. Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: keyofhistory-redis-prod
-    restart: always
-    volumes:
-      - redis_prod_data:/data
-    networks:
-      - keyofhistory-prod-network
-
-  # 3. RabbitMQ Message Broker
-  rabbitmq:
-    image: rabbitmq:3.12-alpine
-    container_name: keyofhistory-rabbitmq-prod
-    restart: always
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    volumes:
-      - rabbitmq_prod_data:/var/lib/rabbitmq
-    networks:
-      - keyofhistory-prod-network
-
-  # 4. Spring Boot Java Backend
-  backend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/keyofhistory-backend:prod-latest
-    container_name: keyofhistory-backend-prod
-    restart: always
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=keyofhistory
-      - DB_USER=postgres
-      - DB_PASSWORD=${DB_PASSWORD}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - SPRING_MAIL_HOST=${SPRING_MAIL_HOST}
-      - SPRING_MAIL_PORT=${SPRING_MAIL_PORT}
-      - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
-      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
-      - SPRING_MAIL_SMTP_AUTH=true
-      - SPRING_MAIL_STARTTLS_ENABLE=true
-      - SPRING_MAIL_STARTTLS_REQUIRED=true
-    depends_on:
-      - postgres
-      - redis
-      - rabbitmq
-    networks:
-      - keyofhistory-prod-network
-
-  # 5. React Frontend
+  # 1. React Frontend
   frontend:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/keyofhistory-frontend:prod-latest
     container_name: keyofhistory-frontend-prod
     restart: always
-    depends_on:
-      - backend
     networks:
       - keyofhistory-prod-network
 
-  # 6. Caddy Server (Automated HTTPS / SSL Reverse Proxy)
+  # 2. Caddy Server (Automated HTTPS / SSL Reverse Proxy)
   caddy:
     image: caddy:2-alpine
     container_name: keyofhistory-caddy-prod
@@ -100,8 +31,5 @@ networks:
     name: keyofhistory-prod-network
 
 volumes:
-  postgres_prod_data:
-  redis_prod_data:
-  rabbitmq_prod_data:
   caddy_data:
   caddy_config:

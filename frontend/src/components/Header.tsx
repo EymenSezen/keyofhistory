@@ -20,11 +20,11 @@ export const Header: React.FC = () => {
           </svg>
           <div className="logo-text">
             <h1>KEY OF HISTORY</h1>
-            <span className="logo-badge">Zaman Tüneli</span>
+            <span className="logo-badge">Hatay Haritası</span>
           </div>
         </div>
         <p className="header-subtitle">
-          Tarihin dönüm noktalarını keşfedin, kronolojik olayları inceleyin ve kendi notlarınızı ekleyerek arşivimize katkıda bulunun.
+          Hatay'ın tüm ilçelerini, mahallelerini, tarihi yerlerini, eski ve Arapça yer isimlerini interaktif 16-bit retro harita üzerinde keşfedin.
         </p>
       </div>
     </header>

@@ -11,16 +11,7 @@ spec:
     - host: keyofhistory.local # Local production simulation hostname
       http:
         paths:
-          # Route /api traffic directly to the Spring Boot REST API
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 8080
-          
-          # Route all other traffic to Nginx serving React static assets
+          # Route all traffic to Nginx serving React static assets
           - path: /
             pathType: Prefix
             backend:

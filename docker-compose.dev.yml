@@ -1,90 +1,4 @@
 services:
-  # Relational Database Service (PostgreSQL)
-  postgres:
-    image: postgres:15-alpine
-    container_name: keyofhistory-postgres
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=keyofhistory
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - keyofhistory-network
-
-  # Cache & Session Service (Redis)
-  redis:
-    image: redis:7-alpine
-    container_name: keyofhistory-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - keyofhistory-network
-
-  # Message Broker Service (RabbitMQ with Management Plugin)
-  rabbitmq:
-    image: rabbitmq:3.12-management-alpine
-    container_name: keyofhistory-rabbitmq
-    ports:
-      - "5672:5672" # AMQP protocol port
-      - "15672:15672" # Management web UI dashboard
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - keyofhistory-network
-
-  # Mail Catcher / Mock SMTP Server (Mailpit)
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: keyofhistory-mailpit
-    ports:
-      - "1025:1025" # SMTP port
-      - "8025:8025" # Web UI dashboard
-    networks:
-      - keyofhistory-network
-
-  # Java Spring Boot Backend Service
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: keyofhistory-backend
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod # Activates application-prod.properties
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=keyofhistory
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - SPRING_MAIL_HOST=smtp.gmail.com
-      - SPRING_MAIL_PORT=587
-      - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
-      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
-      - SPRING_MAIL_SMTP_AUTH=true
-      - SPRING_MAIL_STARTTLS_ENABLE=true
-      - SPRING_MAIL_STARTTLS_REQUIRED=true
-
-    depends_on:
-      - postgres
-      - redis
-      - rabbitmq
-      - mailpit
-    networks:
-      - keyofhistory-network
-
   # React Frontend Service (Served via Nginx)
   frontend:
     build:
@@ -93,18 +7,9 @@ services:
     container_name: keyofhistory-frontend
     ports:
       - "3000:80" # Expose HTTP port 80 as local 3000
-    depends_on:
-      - backend
     networks:
       - keyofhistory-network
-
-volumes:
-  postgres_data:
-  redis_data:
-  rabbitmq_data:
 
 networks:
   keyofhistory-network:
     driver: bridge
-    #yerel imajlari kullanmak için docker compose kullanıyoruz. 
-    #docker-compose -f docker-compose.dev.yml build
