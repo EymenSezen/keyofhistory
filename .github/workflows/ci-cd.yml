@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - main
+      - justmap
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
+      - justmap
 
 permissions:
   contents: write
@@ -49,7 +51,7 @@ jobs:
     name: Package & Deploy (CD)
     needs: [build-test-frontend]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/justmap' || startsWith(github.ref, 'refs/tags/v'))
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
