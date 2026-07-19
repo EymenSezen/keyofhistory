@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # 1. React Frontend
   frontend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/keyofhistory-frontend:prod-latest
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/keyofhistory-frontend:latest
     container_name: keyofhistory-frontend-prod
     restart: always
     networks:
