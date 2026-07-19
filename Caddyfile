@@ -1,4 +1,4 @@
-{$DOMAIN_NAME:localhost} {
+http://{$DOMAIN_NAME:localhost} {
     # Reverse proxy all traffic to the Nginx container serving React static files
     # The frontend Nginx container already reverse proxies /api/ requests to the Spring Boot backend
     reverse_proxy frontend:80
